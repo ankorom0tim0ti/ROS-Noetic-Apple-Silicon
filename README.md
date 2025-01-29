@@ -3,6 +3,8 @@ This repository provides a Dockerfile to run ROS Noetic (ROS1 distribution for U
 
 The advantage of the Docker module provided by this repository is that it makes building and running Docker containers easy through submodule management using shell scripts.
 
+*This is my first time making Dockerfile, so please feel free to submit pull requests for any improvements or corrections.*
+
 ## Usage
 0. For those new to Docker, please refer to the following link to install Docker Engine:
    `https://docs.docker.com/engine/install`
