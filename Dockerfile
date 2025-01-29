@@ -28,6 +28,10 @@ RUN apt-get update && apt-get install -y \
     ros-noetic-urdfdom-py \
     wget \
     ros-noetic-ridgeback-control \
+    ros-noetic-jsk-perception \
+    ros-noetic-jsk-recognition \
+    ros-noetic-jsk-recognition-msgs \
+    ros-noetic-jsk-tools \
     && rm -rf /var/lib/apt/lists/*
 
 # rosdepの更新
