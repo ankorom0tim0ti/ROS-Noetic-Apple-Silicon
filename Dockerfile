@@ -1,7 +1,7 @@
-# osrfが提供するrosイメージ（タグがnoetic-desktop-full）をベースとしてダウンロード
+# Use the OSRF ROS image (tag: noetic-desktop-full) as base image
 FROM osrf/ros:noetic-desktop-full
 
-# パッケージリストの更新とパッケージのインストール
+# Update package list and install additional packages
 RUN apt-get update && apt-get install -y \
     git \
     python3-pip \
@@ -34,35 +34,35 @@ RUN apt-get update && apt-get install -y \
     ros-noetic-jsk-tools \
     && rm -rf /var/lib/apt/lists/*
 
-# rosdepの更新
+# Update rosdep
 RUN rosdep update
 
-# SSHディレクトリを作成
+# Create SSH directory
 RUN mkdir -p /root/.ssh && \
     chmod 700 /root/.ssh
 
-# Docker実行してシェルに入ったときの初期ディレクトリ（ワークディレクトリ）の設定
+# Set the initial working directory when entering the container
 WORKDIR /root/
 
-# nvidia-container-runtime（描画するための環境変数の設定）
+# Set environment variables for NVIDIA container runtime (needed for graphical rendering)
 ENV NVIDIA_VISIBLE_DEVICES \
     ${NVIDIA_VISIBLE_DEVICES:-all}
 ENV NVIDIA_DRIVER_CAPABILITIES \
     ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
 
-# ROSの環境整理
-# ROSのセットアップシェルスクリプトを.bashrcファイルに追記
+# Source ROS setup script in bashrc to set up the ROS environment automatically
 RUN echo "source /opt/ros/noetic/setup.sh" >> .bashrc
 
-# 自分のワークスペース作成のためにフォルダを作成
+# Create a directory for your workspace
 RUN mkdir -p catkin_ws/src
 
-# srcディレクトリまで移動して，catkin_init_workspaceを実行．
+# Change to the src directory and initialize the workspace
 RUN cd catkin_ws/src && . /opt/ros/noetic/setup.sh && catkin_init_workspace
 
-# ~/に移動してから，catkin_wsディレクトリに移動して，catkin buildを実行．
+# Move to the home directory, then catkin_ws and build the workspace
 RUN cd && cd catkin_ws && . /opt/ros/noetic/setup.sh && catkin build
 
+# Clone the ddynamic_reconfigure repository, checkout master, and build it
 RUN cd /root && \
     git clone https://github.com/pal-robotics/ddynamic_reconfigure.git && \
     cd ddynamic_reconfigure && \
@@ -72,7 +72,7 @@ RUN cd /root && \
     cd catkin_ws && \
     catkin build
 
-# catkin_virtualenvのインストール
+# Clone the catkin_virtualenv repository, checkout master, and build it
 RUN cd /root && \
     git clone https://github.com/locusrobotics/catkin_virtualenv.git && \
     cd catkin_virtualenv && \
@@ -82,5 +82,5 @@ RUN cd /root && \
     cd catkin_ws && \
     catkin build
 
-# 自分のワークスペースが反映されるように，.bashrcファイルに追記．
+# Add the ROS workspace setup to bashrc so it's sourced automatically
 RUN echo "source ./catkin_ws/devel/setup.bash" >> .bashrc
