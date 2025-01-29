@@ -57,6 +57,12 @@ This Dockerfile is designed to set up a development environment based on the ROS
 - **Automatic ROS Environment Setup**: The ROS setup script and the catkin workspace setup script are automatically sourced in the `.bashrc` file, ensuring the ROS environment is ready when a new terminal session is started.
 
 ## References
+This project is based on the following website for reference:
+- https://wiki.ros.org/docker/Tutorials/Docker
+- https://qiita.com/Yuya-Shimizu/items/3d9fc18f42aee40f23b3
+- https://qiita.com/porizou1/items/d6ff78035544999d7c1c
+- https://note.com/npaka/n/ne9530038d80b
+- 
 
 ## License
 
