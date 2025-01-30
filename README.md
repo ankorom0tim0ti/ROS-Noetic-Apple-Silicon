@@ -5,6 +5,11 @@ The advantage of the Docker module provided by this repository is that it makes 
 
 *This is my first time making Dockerfile, so please feel free to submit pull requests for any improvements or corrections.*
 
+## Note
+- The host's "noetic" directory and the Docker's ~/noetic directory are shared.
+
+- When running, the privileged option is provided, so devices like USBs can be used just like on the host.
+
 ## Usage
 0. For those new to Docker, please refer to the following link to install Docker Engine:
    `https://docs.docker.com/engine/install`

@@ -1,2 +1,2 @@
 #!/bin/bash
-docker build -t noetic:0.1.1 .
+docker build -t noetic:1.1.0 .

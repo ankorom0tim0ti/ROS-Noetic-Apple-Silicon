@@ -32,7 +32,30 @@ RUN apt-get update && apt-get install -y \
     ros-noetic-jsk-recognition \
     ros-noetic-jsk-recognition-msgs \
     ros-noetic-jsk-tools \
+    # Add these packages for librealsense
+    libssl-dev \
+    libusb-1.0-0-dev \
+    libudev-dev \
+    pkg-config \
+    libgtk-3-dev \
+    cmake \
+    v4l-utils \
     && rm -rf /var/lib/apt/lists/*
+
+# Create udev rules directory
+RUN mkdir -p /etc/udev/rules.d/
+
+# Clone and build librealsense
+RUN cd /root && \
+    git clone https://github.com/IntelRealSense/librealsense.git && \
+    cd librealsense && \
+    mkdir build && \
+    cd build && \
+    cmake ../ -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=true && \
+    make -j4 && \
+    make install && \
+    cd .. && \
+    ./scripts/setup_udev_rules.sh
 
 # Update rosdep
 RUN rosdep update
