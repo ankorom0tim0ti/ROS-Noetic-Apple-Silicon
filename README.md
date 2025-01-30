@@ -10,6 +10,8 @@ The advantage of the Docker module provided by this repository is that it makes 
 
 - When running, the privileged option is provided, so devices like USBs can be used just like on the host.
 
+- First build takes about 10 min.
+
 ## Usage
 0. For those new to Docker, please refer to the following link to install Docker Engine:
    `https://docs.docker.com/engine/install`
