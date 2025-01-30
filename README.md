@@ -1,5 +1,5 @@
 # ros-noetic-docker
-This repository provides a Dockerfile to run ROS Noetic (ROS1 distribution for Ubuntu 20.04) is a Docker virtual environment on Ubunt 24.04 (and Ubuntu 22.04)
+This repository provides a Dockerfile to run ROS Noetic (ROS1 distribution for Ubuntu 20.04) as a Docker virtual environment on Ubunt 24.04 (and Ubuntu 22.04)
 
 The advantage of the Docker module provided by this repository is that it makes building and running Docker containers easy through submodule management using shell scripts.
 
