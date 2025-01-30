@@ -1,19 +1,19 @@
 #!/bin/bash
 
-# SSHキーの存在確認
+# Check SSH key
 if [ ! -f ~/.ssh/id_rsa ] && [ ! -f ~/.ssh/id_ed25519 ]; then
-    echo "エラー: SSHキーが見つかりません。"
-    echo "~/.ssh/id_rsa または ~/.ssh/id_ed25519 が必要です。"
+    echo "ERROE: SSH key not found!"
+    echo "~/.ssh/id_rsa or ~/.ssh/id_ed25519 is needed!"
     exit 1
 fi
 
-# 既存のコンテナを停止・削除
+# Stop and delete the container
 docker stop ros1_noetic 2>/dev/null || true
 docker rm ros1_noetic 2>/dev/null || true
 
 xhost +local:docker
 
-# コンテナを起動
+# Run the container
 docker run -it \
     --privileged \
     --name ros1_noetic \
