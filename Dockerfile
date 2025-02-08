@@ -32,6 +32,12 @@ RUN apt-get update && apt-get install -y \
     ros-noetic-jsk-recognition \
     ros-noetic-jsk-recognition-msgs \
     ros-noetic-jsk-tools \
+    # Add font to resolve issue #2
+    xfonts-base \
+    xfonts-100dpi \
+    xfonts-75dpi \
+    xfonts-scalable \
+    xfonts-cyrillic \
     # Add these packages for librealsense
     libssl-dev \
     libusb-1.0-0-dev \
