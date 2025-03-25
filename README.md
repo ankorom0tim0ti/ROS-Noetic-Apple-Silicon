@@ -36,7 +36,7 @@ The advantage of the Docker module provided by this repository is that it makes 
     (↑ when you use rviz, rqt_reconfigure, rostopic echo,..., run command above after devide terminal screen.)
 
 ## Feature of this Dockerfile / Docker Container
-This Dockerfile is designed to set up a development environment based on the ROS Noetic distribution, using the `noetic-desktop-full` image as its base. It installs a variety of essential packages for ROS development, including Python tools, SSH, and several ROS-related packages.
+This Dockerfile is designed to set up a development environment based on the ROS Noetic distribution, using the `noetic-perception-focal` image as its base. It installs a variety of essential packages for ROS development, including Python tools, SSH, and several ROS-related packages.
 
 ### 1. ROS Noetic Packages
 - **`ros-noetic-roseus`**: A package for interfacing with ROS using the Lisp programming language (EusLisp).
