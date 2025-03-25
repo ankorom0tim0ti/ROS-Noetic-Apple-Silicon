@@ -1,86 +1,115 @@
-# Use the OSRF ROS image (tag: noetic-desktop-full) as base image
-FROM osrf/ros:noetic-desktop-full
+FROM arm64v8/ros:noetic-perception-focal
 
-# Update package list and install additional packages
-RUN apt-get update && apt-get install -y \
-    git \
-    python3-pip \
-    python3-dev \
-    python3-setuptools \
-    python-is-python3 \
-    python3-rosdep \
-    python3-catkin-tools \
-    openssh-client \
-    emacs \
-    gtk2-engines-pixbuf \
-    libcanberra-gtk-module \
-    libcanberra-gtk3-module \
-    ros-noetic-roseus \
-    ros-noetic-pr2eus \
-    ros-noetic-jskeus \
-    ros-noetic-realsense2-camera \
-    ros-noetic-realsense2-description \
-    ros-noetic-ddynamic-reconfigure \
-    ros-noetic-catkin-virtualenv \
-    python3-vcstool \
-    ros-noetic-joint-trajectory-controller \
-    ros-noetic-jsk-tools \
-    ros-noetic-urdfdom-py \
-    wget \
-    ros-noetic-ridgeback-control \
-    ros-noetic-jsk-perception \
-    ros-noetic-jsk-recognition \
-    ros-noetic-jsk-recognition-msgs \
-    ros-noetic-jsk-tools \
-    # Add font to resolve issue #2
-    xfonts-base \
-    xfonts-100dpi \
-    xfonts-75dpi \
-    xfonts-scalable \
-    xfonts-cyrillic \
-    # Add these packages for librealsense
-    libssl-dev \
-    libusb-1.0-0-dev \
-    libudev-dev \
-    pkg-config \
-    libgtk-3-dev \
-    cmake \
-    v4l-utils \
-    && rm -rf /var/lib/apt/lists/*
+LABEL maintainer =  "B-SKY Lab"
 
-# Create udev rules directory
-RUN mkdir -p /etc/udev/rules.d/
 
-# Clone and build librealsense
-RUN cd /root && \
-    git clone https://github.com/IntelRealSense/librealsense.git && \
-    cd librealsense && \
-    mkdir build && \
-    cd build && \
-    cmake ../ -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=true && \
-    make -j4 && \
-    make install && \
-    cd .. && \
-    ./scripts/setup_udev_rules.sh
+ARG DEBIAN_FRONTEND=noninteractive
 
-# Update rosdep
-RUN rosdep update
+# ----------------------------------------------------------------------------
+# Environment variables (from the first Dockerfile)
+# ----------------------------------------------------------------------------
+ENV USER=docker
+ENV PASSWORD=docker
+ENV HOME=/home/${USER}
+ENV SHELL=/bin/bash
 
-# Create SSH directory
-RUN mkdir -p /root/.ssh && \
-    chmod 700 /root/.ssh
+# Install basic tools
+RUN apt-get update -y
+RUN apt-get upgrade -y
+RUN apt-get install -y vim-gtk
+RUN apt-get install -y git
+RUN apt-get install -y tmux
+RUN apt-get install -y bash-completion
+RUN apt-get install -y sudo
+RUN apt-get install -y mesa-utils
+RUN apt-get install -y x11-apps 
 
-# Set the initial working directory when entering the container
-WORKDIR /root/
+# Install ROS tools
+RUN apt-get install -y python3-osrf-pycommon
+RUN apt-get install -y python3-catkin-tools
+RUN apt-get install -y python3-rosdep
+RUN apt-get install -y python3-rosinstall
+RUN apt-get install -y python3-rosinstall-generator
+RUN apt-get install -y python3-wstool 
+RUN apt-get install -y build-essential
 
-# Set environment variables for NVIDIA container runtime (needed for graphical rendering)
-ENV NVIDIA_VISIBLE_DEVICES \
-    ${NVIDIA_VISIBLE_DEVICES:-all}
-ENV NVIDIA_DRIVER_CAPABILITIES \
-    ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
+RUN apt-get install -y ros-noetic-rosserial-arduino ros-noetic-rosserial
+RUN apt-get install -y ros-noetic-joy
+RUN apt-get install -y ros-noetic-desktop-full
+RUN apt-get install -y ros-noetic-jsk-visualization
 
-# Source ROS setup script in bashrc to set up the ROS environment automatically
-RUN echo "source /opt/ros/noetic/setup.sh" >> .bashrc
+RUN apt-get install -y python3-dev
+RUN apt-get install -y python3-setuptools
+RUN apt-get install -y python-is-python3
+RUN apt-get install -y openssh-client
+RUN apt-get install -y emacs
+RUN apt-get install -y gtk2-engines-pixbuf
+RUN apt-get install -y libcanberra-gtk-module
+RUN apt-get install -y libcanberra-gtk3-module
+RUN apt-get install -y ros-noetic-roseus
+RUN apt-get install -y ros-noetic-pr2eus
+RUN apt-get install -y ros-noetic-jskeus
+RUN apt-get install -y ros-noetic-realsense2-camera
+RUN apt-get install -y ros-noetic-realsense2-description
+RUN apt-get install -y ros-noetic-ddynamic-reconfigure
+RUN apt-get install -y ros-noetic-catkin-virtualenv
+RUN apt-get install -y python3-vcstool
+RUN apt-get install -y ros-noetic-joint-trajectory-controller
+RUN apt-get install -y ros-noetic-jsk-tools
+RUN apt-get install -y ros-noetic-urdfdom-py
+RUN apt-get install -y wget
+RUN apt-get install -y ros-noetic-ridgeback-control
+RUN apt-get install -y ros-noetic-jsk-perception
+RUN apt-get install -y ros-noetic-jsk-recognition
+RUN apt-get install -y ros-noetic-jsk-recognition-msgs
+RUN apt-get install -y ros-noetic-jsk-tools
+
+# Fonts (to resolve issue #2)
+RUN apt-get install -y xfonts-base
+RUN apt-get install -y xfonts-100dpi
+RUN apt-get install -y xfonts-75dpi
+RUN apt-get install -y xfonts-scalable
+RUN apt-get install -y xfonts-cyrillic
+
+# librealsense build dependencies
+RUN apt-get install -y libssl-dev
+RUN apt-get install -y libusb-1.0-0-dev
+RUN apt-get install -y libudev-dev
+RUN apt-get install -y pkg-config
+RUN apt-get install -y libgtk-3-dev
+RUN apt-get install -y cmake
+RUN apt-get install -y v4l-utils
+
+RUN apt-get install -y libgl1-mesa-glx libgl1-mesa-dri
+
+# Clean up after all installations to save space
+RUN rm -rf /var/lib/apt/lists/*
+
+# Install pip packages
+RUN apt-get update && apt-get install -y software-properties-common
+RUN add-apt-repository universe
+RUN apt-get update && apt-get install -y python3-pip
+RUN pip3 install feetech-servo-sdk
+RUN pip3 install readchar
+
+
+# Set Completion
+RUN rm /etc/apt/apt.conf.d/docker-clean
+
+
+# Create user and add to sudo group
+RUN useradd --user-group --create-home --shell /bin/false ${USER}
+RUN gpasswd -a ${USER} sudo
+RUN echo "${USER}:${PASSWORD}" | chpasswd
+RUN sed -i.bak "s#${HOME}:#${HOME}:${SHELL}#" /etc/passwd
+RUN gpasswd -a ${USER} dialout
+RUN chown -R ${USER}:${USER} ${HOME}
+
+
+# Set defalut user
+USER ${USER}
+WORKDIR ${HOME}
+RUN cd ${HOME}
 
 # Create a directory for your workspace
 RUN mkdir -p catkin_ws/src
@@ -89,27 +118,25 @@ RUN mkdir -p catkin_ws/src
 RUN cd catkin_ws/src && . /opt/ros/noetic/setup.sh && catkin_init_workspace
 
 # Move to the home directory, then catkin_ws and build the workspace
-RUN cd && cd catkin_ws && . /opt/ros/noetic/setup.sh && catkin build
+RUN cd catkin_ws && . /opt/ros/noetic/setup.sh && catkin build
 
-# Clone the ddynamic_reconfigure repository, checkout master, and build it
-RUN cd /root && \
-    git clone https://github.com/pal-robotics/ddynamic_reconfigure.git && \
-    cd ddynamic_reconfigure && \
-    git checkout master && \
-    cd .. && \
-    mv ddynamic_reconfigure /root/catkin_ws/src/ && \
-    cd catkin_ws && \
-    catkin build
 
-# Clone the catkin_virtualenv repository, checkout master, and build it
-RUN cd /root && \
-    git clone https://github.com/locusrobotics/catkin_virtualenv.git && \
-    cd catkin_virtualenv && \
-    git checkout master && \
-    cd .. && \
-    mv catkin_virtualenv /root/catkin_ws/src/ && \
-    cd catkin_ws && \
-    catkin build
+# Set name color on terminal to Light Cyan
+RUN touch .bashrc
+RUN echo "PS1='${debian_chroot:+($debian_chroot)}\[\033[01;36m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '" >> .bashrc
+RUN echo "alias ls='ls --color=auto'" >> .bashrc
 
-# Add the ROS workspace setup to bashrc so it's sourced automatically
-RUN echo "source ./catkin_ws/devel/setup.bash" >> .bashrc
+# Set Completion
+RUN ["/bin/bash", "-c", "source /etc/bash_completion"]
+
+# Set 256 color at tmux
+RUN touch ${HOME}/.tmux.conf
+RUN echo "set-option -g default-command 'bash --init-file ~/.bashrc'">> ${HOME}/.tmux.conf
+RUN echo "set-option -g default-terminal screen-256color">> ${HOME}/.tmux.conf
+RUN echo "set -g terminal-overrides 'xterm:colors=256'">> ${HOME}/.tmux.conf
+
+
+# Setup ROS
+RUN echo "source /opt/ros/noetic/setup.bash" >> ${HOME}/.bashrc
+RUN echo "source ~/catkin_ws/devel/setup.bash" >> ${HOME}/.bashrc
+

@@ -19,10 +19,12 @@ docker run -it \
     --privileged \
     --name ros1_noetic \
     --net=host \
-    --env="DISPLAY=$DISPLAY" \
+    --env="DISPLAY=host.docker.internal:0" \
+    --env="LIBGL_ALWAYS_INDIRECT=1" \
     --env="QT_X11_NO_MITSHM=1" \
     --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
     --volume="$HOME/ros1/noetic-docker/noetic:/root/noetic" \
+    --volume="$HOME/Users/ankoromocchimochi/docker/ros-noetic-docker/volume:/workspaces" \
     --volume="$HOME/.ssh:/root/.ssh:ro" \
     --device-cgroup-rule='c 81:* rmw' \
     --device-cgroup-rule='c 189:* rmw' \

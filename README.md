@@ -26,6 +26,7 @@ The advantage of the Docker module provided by this repository is that it makes 
    ```
 3. Run the Docker Container:
    ```
+   xhost +
    ./noetic_docker_run.sh
    ```
 4. Duplicate the Docker Container terminal:
