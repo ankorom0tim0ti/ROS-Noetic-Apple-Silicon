@@ -7,12 +7,20 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
-
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
     - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build Docker image for Apple Silicon
+      run: |
+        docker buildx build \
+          --platform linux/arm64 \
+          --file Dockerfile \
+          --tag my-image-name:$(date +%s) \
+          --load \
+          .
